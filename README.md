@@ -112,6 +112,9 @@ Djano Project/
 ├── package.json              ← root scripts (npm run dev starts everything)
 ├── docker-compose.yml        ← Docker dev config (hot-reload, volume mounts)
 ├── docker-compose.prod.yml   ← Docker production config (no reload, restart)
+├── .github/
+│   └── workflows/
+│       └── ci.yml            ← GitHub Actions CI (runs on every push/PR)
 ├── backend/
 │   ├── Dockerfile            ← multi-stage Python build (non-root user)
 │   ├── .dockerignore
@@ -141,6 +144,54 @@ Djano Project/
 
 ---
 
+## CI/CD — Automated testing and deployment
+
+Every push to `main` triggers a GitHub Actions pipeline that checks your code automatically.
+
+### What happens on `git push`
+
+1. **GitHub Actions** (CI) runs two jobs in parallel:
+   - **Backend**: installs Python deps, verifies the app starts, hits `/health`
+   - **Frontend**: installs Node deps, type-checks, lints, builds
+2. If both pass, **Railway** auto-deploys the backend and **Vercel** auto-deploys the frontend
+
+### GitHub Actions secret (one-time setup)
+
+Go to your GitHub repo → **Settings → Secrets and variables → Actions → New repository secret**:
+- Name: `DATABASE_URL`
+- Value: your Supabase connection string (same one from `backend/.env`)
+
+This lets the CI backend job connect to your database during testing.
+
+### Deploy backend to Railway
+
+1. Go to [railway.app](https://railway.app) and create a new project
+2. Click **GitHub Repository** and select your repo
+3. In the service settings:
+   - Set **Root Directory** to `backend`
+   - Railway will detect the `Dockerfile` automatically
+4. Go to **Variables** and add:
+   - `DATABASE_URL` = your Supabase connection string
+   - `CORS_ORIGINS` = your Vercel frontend URL (e.g. `https://your-app.vercel.app`)
+5. Railway gives you a public URL like `https://your-app.up.railway.app`
+
+### Deploy frontend to Vercel
+
+1. Go to [vercel.com](https://vercel.com) and import your GitHub repo
+2. Configure the project:
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. Go to **Settings → Environment Variables** and add:
+   - `VITE_API_URL` = your Railway backend URL (e.g. `https://your-app.up.railway.app`)
+4. Vercel gives you a public URL like `https://your-app.vercel.app`
+
+### After both are deployed
+
+Update Railway's `CORS_ORIGINS` variable with your actual Vercel URL so the backend accepts requests from the frontend. Then every `git push` to `main` auto-deploys both services.
+
+---
+
 ## What each file teaches you
 
 | File | Concept |
@@ -153,6 +204,7 @@ Djano Project/
 | `frontend/Dockerfile` | Build stage vs serve stage, Nginx for static files |
 | `frontend/nginx.conf` | Reverse proxy, SPA fallback (`try_files`) |
 | `docker-compose.yml` | Service orchestration, volumes, depends_on, env vars |
+| `.github/workflows/ci.yml` | GitHub Actions, CI pipelines, parallel jobs, secrets |
 | `frontend/src/types/todo.ts` | TypeScript interfaces, optional fields |
 | `frontend/src/api/todos.ts` | `async`/`await`, axios, generics |
 | `frontend/src/components/TodoForm.tsx` | Controlled inputs, `useState`, form events |

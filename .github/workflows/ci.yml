@@ -1,0 +1,80 @@
+# ---------------------------------------------------------------------------
+# CI Pipeline — runs on every push and pull request to main
+# ---------------------------------------------------------------------------
+# Two jobs run IN PARALLEL:
+#   1. backend  — installs Python deps, verifies the app starts
+#   2. frontend — installs Node deps, type-checks, lints, builds
+#
+# If either job fails, the push/PR is marked as failed.
+# Railway and Vercel watch this status via "Wait for CI" —
+# they only deploy AFTER all checks pass.
+# ---------------------------------------------------------------------------
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ---- Backend CI ----
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Verify app starts
+        run: |
+          timeout 10 uvicorn main:app --host 0.0.0.0 --port 8000 &
+          sleep 3
+          curl -f http://localhost:8000/health || exit 1
+          kill %1
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # ---- Frontend CI ----
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: https://todolist-fastapi-production.up.railway.app
