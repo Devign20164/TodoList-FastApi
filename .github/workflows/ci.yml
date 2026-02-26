@@ -1,22 +1,26 @@
 # ---------------------------------------------------------------------------
-# CI Pipeline — runs on every push and pull request to main
+# CI Pipeline — runs on ALL branches and pull requests
 # ---------------------------------------------------------------------------
 # Two jobs run IN PARALLEL:
 #   1. backend  — installs Python deps, verifies the app starts
 #   2. frontend — installs Node deps, type-checks, lints, builds
 #
-# If either job fails, the push/PR is marked as failed.
-# Railway and Vercel watch this status via "Wait for CI" —
-# they only deploy AFTER all checks pass.
+# CI runs on EVERY branch so bugs are caught early.
+# CD (deployment) only happens when code reaches master:
+#   - Railway deploys backend after CI passes on master
+#   - Vercel deploys frontend after CI passes on master
+#
+# Branching workflow:
+#   feature/* → PR to development → PR to master → production
 # ---------------------------------------------------------------------------
 
 name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, development, 'feature/**']
   pull_request:
-    branches: [master]
+    branches: [master, development]
 
 jobs:
   # ---- Backend CI ----
