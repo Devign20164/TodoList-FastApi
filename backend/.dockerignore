@@ -1,0 +1,18 @@
+# Virtual environment — the Dockerfile builds its own
+venv/
+
+# Bytecode cache — gets regenerated at runtime
+__pycache__/
+*.pyc
+
+# Environment files — secrets must never be baked into images
+.env
+.env.example
+
+# Git metadata
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/

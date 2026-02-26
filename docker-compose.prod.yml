@@ -1,0 +1,42 @@
+# ------------------------------------------------------------------
+# docker-compose.prod.yml — PRODUCTION
+# ------------------------------------------------------------------
+# Unlike the dev compose file, this one:
+#   - Has NO volume mounts (code is baked into the image)
+#   - Has NO --reload (no hot-reloading in production)
+#   - Runs with restart: always (auto-recovers from crashes)
+#   - Uses Nginx to proxy API calls (single entry point)
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Learning note — the -d flag:
+#   -d means "detached" — the containers run in the background.
+#   Without -d, the terminal would be blocked showing logs.
+#   In production, you always run detached.
+# ------------------------------------------------------------------
+
+services:
+  backend:
+    build: ./backend
+    expose:
+      - "8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - CORS_ORIGINS=http://localhost,http://localhost:80
+    restart: always
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: always

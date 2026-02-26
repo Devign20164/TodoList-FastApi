@@ -1,0 +1,17 @@
+{
+  "name": "djano-project",
+  "version": "1.0.0",
+  "description": "A learning project for practising Python web development.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently --names \"backend,frontend\" --prefix-colors \"blue,green\" \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && venv/bin/uvicorn main:app --reload",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

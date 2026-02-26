@@ -1,0 +1,280 @@
+/* -----------------------------------------------------------------------
+   Global styles for the Todo Learning App
+   Clean, minimal design — readable and easy to modify as you learn.
+----------------------------------------------------------------------- */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --secondary: #64748b;
+  --secondary-hover: #475569;
+  --text: #1e293b;
+  --text-muted: #94a3b8;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ---- Page layout ---- */
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* ---- Form ---- */
+.todo-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.todo-form h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  transition: border-color 0.15s;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ---- Buttons ---- */
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  background: var(--primary);
+  color: white;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--secondary);
+  border: 1px solid var(--border);
+}
+
+button.secondary:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--secondary-hover);
+}
+
+button.danger {
+  background: var(--danger);
+  color: white;
+}
+
+button.danger:hover:not(:disabled) {
+  background: var(--danger-hover);
+}
+
+/* ---- Section headings ---- */
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge {
+  background: var(--border);
+  color: var(--text-muted);
+  border-radius: 99px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* ---- Todo list ---- */
+.todo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.todo-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: opacity 0.2s;
+}
+
+.todo-item.completed {
+  opacity: 0.6;
+}
+
+.todo-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.todo-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.todo-check input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.todo-title {
+  font-weight: 500;
+}
+
+.todo-item.completed .todo-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todo-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding-left: 1.5rem;
+}
+
+.todo-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding-left: 1.5rem;
+}
+
+.todo-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ---- Inline edit ---- */
+.todo-edit {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.todo-edit input,
+.todo-edit textarea {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  resize: vertical;
+}
+
+.todo-edit input:focus,
+.todo-edit textarea:focus {
+  outline: none;
+}
+
+.todo-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ---- Status messages ---- */
+.status-msg {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 1rem;
+}
+
+.status-msg.error {
+  color: var(--danger);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius);
+}
+
+.empty-msg {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-style: italic;
+}

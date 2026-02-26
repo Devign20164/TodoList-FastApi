@@ -1,0 +1,16 @@
+# Dependencies — the Dockerfile runs npm ci to install fresh
+node_modules/
+
+# Build output — the Dockerfile runs npm run build
+dist/
+
+# Environment files
+.env
+
+# Git metadata
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
