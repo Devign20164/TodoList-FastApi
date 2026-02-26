@@ -1,0 +1,25 @@
+# Environment files (contain secrets like DATABASE_URL)
+.env
+.env.local
+
+# Keep the template so teammates know which variables are needed
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+
+# Node
+node_modules/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.sw?
